@@ -1,33 +1,21 @@
 
 import 'package:flutter/material.dart';
-import 'package:promosite/InfoLab.dart';
+import 'package:promosite/InfoBloc.dart';
 
-class HomePage extends StatefulWidget {
-  HomePage({Key key}): super(key: key);
+class HomePage extends StatelessWidget {
 
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  InfoLab infoLab;
-  int _counter = 0;
-
-  _HomePageState(){
-    infoLab=new InfoLab();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final InfoBloc infoBloc=InfoBloc();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(infoLab.title),
+        title: StreamBuilder<String>(
+          stream: infoBloc.titleStream.stream,
+          builder: (context,snapshot){
+            return Text("${snapshot.data.toString()}");
+          },
+        ),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -49,17 +37,23 @@ class _HomePageState extends State<HomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(infoLab.text,
+            Text("Placeholder",
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            StreamBuilder<int>(
+                stream: infoBloc.counterStream.stream,
+                builder: (context, snapshot) {
+                  return Text(
+                    '${snapshot.data.toString()}',
+                    style: Theme.of(context).textTheme.headline4,
+                  );
+                }),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () {
+          infoBloc.actionController.sink.add(null);
+          },
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
