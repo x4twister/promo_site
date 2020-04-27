@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:promosite/InfoBloc.dart';
+import 'package:promosite/InfoLab.dart';
 
 class HomePage extends StatelessWidget {
 
@@ -17,45 +19,43 @@ class HomePage extends StatelessWidget {
           },
         ),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text("Placeholder",
-            ),
-            StreamBuilder<int>(
-                stream: infoBloc.counterStream.stream,
-                builder: (context, snapshot) {
-                  return Text(
-                    '${snapshot.data.toString()}',
-                    style: Theme.of(context).textTheme.headline4,
-                  );
-                }),
-          ],
-        ),
+      body: StreamBuilder<List<Block>>(
+        stream: infoBloc.blockStream.stream,
+        builder: (context, snapshot) {
+          if (snapshot.data != null) {
+            return ListView(children:
+            snapshot.data.map((e) =>
+            new Container(
+                //color: Colors.black12,
+                //height: 100.0,
+                margin: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(40.0),
+                decoration: BoxDecoration(borderRadius: new BorderRadius.only(
+                    topLeft:  const  Radius.circular(20.0),
+                    topRight: const  Radius.circular(20.0),
+                    bottomLeft: const  Radius.circular(20.0),
+                    bottomRight: const  Radius.circular(20.0),
+                ),
+                    color: Colors.black12),
+                child: new Text(e.text)
+              /*new Row(children: [
+                  new Expanded(child: new Container(padding: new EdgeInsets.all(5.0), child: new Column(children: [
+                    new Text("Title", style: new TextStyle(fontSize: 20.0), overflow: TextOverflow.ellipsis),
+                    new Expanded(child: new Text(e, softWrap: true, textAlign: TextAlign.justify))
+                  ]))),
+                ])*/
+            )).toList()
+            );
+          } else
+            return Container(width: 0.0, height: 0.0);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           infoBloc.actionController.sink.add(null);
           },
         tooltip: 'Increment',
-        child: Icon(Icons.add),
+        child: Icon(Icons.email),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
