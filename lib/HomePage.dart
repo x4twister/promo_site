@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:promosite/InfoBloc.dart';
-import 'package:promosite/InfoLab.dart';
+import 'package:promosite/model/InfoBlock.dart';
 
 class HomePage extends StatelessWidget {
 
@@ -19,12 +19,12 @@ class HomePage extends StatelessWidget {
           },
         ),
       ),
-      body: StreamBuilder<List<Block>>(
+      body: StreamBuilder<List<InfoBlock>>(
         stream: infoBloc.blockStream.stream,
         builder: (context, snapshot) {
           if (snapshot.data != null) {
-            return ListView(children:
-            snapshot.data.map((e) =>
+            return Scrollbar(isAlwaysShown: true,child: ListView(children:
+            snapshot.data.map((block) =>
             new Container(
                 //color: Colors.black12,
                 //height: 100.0,
@@ -36,8 +36,18 @@ class HomePage extends StatelessWidget {
                     bottomLeft: const  Radius.circular(20.0),
                     bottomRight: const  Radius.circular(20.0),
                 ),
-                    color: Colors.black12),
-                child: new Text(e.text)
+                    color: Colors.black12,
+                  boxShadow: [
+                    BoxShadow (
+                      color: Colors.black12,
+                      offset: Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ], ),
+                child: new Column(children: [
+                  new Text(block.subtitle, style: new TextStyle(fontSize: 20.0,color: Colors.green), overflow: TextOverflow.ellipsis),
+                  new Text(block.text, softWrap: true, textAlign: TextAlign.justify)
+                ])
               /*new Row(children: [
                   new Expanded(child: new Container(padding: new EdgeInsets.all(5.0), child: new Column(children: [
                     new Text("Title", style: new TextStyle(fontSize: 20.0), overflow: TextOverflow.ellipsis),
@@ -45,7 +55,7 @@ class HomePage extends StatelessWidget {
                   ]))),
                 ])*/
             )).toList()
-            );
+            ));
           } else
             return Container(width: 0.0, height: 0.0);
         },

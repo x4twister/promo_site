@@ -1,8 +1,10 @@
 
 import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'InfoLab.dart';
+import 'model/InfoBlock.dart';
+import 'model/InfoLab.dart';
 
 class InfoBloc {
 
@@ -16,14 +18,14 @@ class InfoBloc {
   int _counter;
   InfoLab infoLab;
 
-  /// Поток для ввода
+  /// in stream
   final StreamController actionController = StreamController();
-  /// Поток для вывода (rxDart)
+  /// out stream (rxDart)
   final counterStream = BehaviorSubject<int>.seeded(5);
   ///
   final titleStream = BehaviorSubject<String>.seeded("default");
   ///
-  final blockStream = BehaviorSubject<List<Block>>.seeded([]);
+  final blockStream = BehaviorSubject<List<InfoBlock>>.seeded([]);
 
   void _increaseStream(data) {
     _counter += 1;
@@ -38,13 +40,9 @@ class InfoBloc {
   }
 
   _init() async {
-    var json=await _getJSON();
+    var json=await rootBundle.loadString('web/assets/data.json');
     infoLab=infoLabFromJson(json);
     titleStream.sink.add(infoLab.title);
     blockStream.sink.add(infoLab.blocks);
-  }
-
-  _getJSON() {
-    return "{\"title\":\"TITLE\",\"blocks\":[{\"subtitle\":\"SUBTITLE\",\"text\":\"TEXT\"}]}";
   }
 }
